@@ -53,7 +53,7 @@ def _clean(df):
     need = ["Open", "High", "Low", "Close", "Volume"]
     if any(c not in df.columns for c in need):
         return None
-    df = df[need].apply(pd.to_numeric, errors="coerce")
+    df = df[need].apply(pd.to_numeric, errors="coerce").astype(float)   # Yahoo volumes are int64; keep everything float
     df.index = pd.to_datetime(df.index)
     if getattr(df.index, "tz", None) is not None:
         df.index = df.index.tz_localize(None)
@@ -1260,7 +1260,7 @@ def adjust_corporate_actions(data, gap_down=0.60, gap_up=1.70):
         ratio = o[1:] / c[:-1]
         hits = np.where((ratio < gap_down) | (ratio > gap_up))[0]
         if len(hits):
-            df = df.copy()
+            df = df.astype(float)
             for h in hits[::-1]:
                 k = h + 1; f = ratio[h]
                 for col in ("Open", "High", "Low", "Close"):
