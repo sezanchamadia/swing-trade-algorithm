@@ -1,0 +1,7 @@
+signal_date,symbol,strategy,qty,equity_at_signal,score_v2,breadth,est_entry,est_stop,logged_at,status,fill_date,fill,stop,exit_date,exit,result,last,days,pnl,ret_pct,r_mult,as_of
+2026-11-12,BHEL,EMA 10/30 crossover,38,100000.0,75.2,0.793,431.2,394.84,2026-11-12 14:15,Order pending,,,,,,,,,,,,2026-11-12
+2026-11-12,PAYTM,20-day breakout,7,100000.0,74.3,0.793,1925.0,1726.23,2026-11-12 14:15,Order pending,,,,,,,,,,,,2026-11-12
+2026-11-12,SAIL,20-day breakout,83,100000.0,73.9,0.793,177.7,159.78,2026-11-12 14:15,Order pending,,,,,,,,,,,,2026-11-12
+2026-11-12,DLF,20-day breakout,21,100000.0,73.1,0.793,769.3,712.27,2026-11-12 14:15,Order pending,,,,,,,,,,,,2026-11-12
+2026-11-12,OBEROIRLTY,20-day breakout,9,100000.0,69.2,0.793,1817.0,1662.47,2026-11-12 14:15,Order pending,,,,,,,,,,,,2026-11-12
+2026-11-12,LODHA,20-day breakout,11,100000.0,65.3,0.793,1226.0,1091.54,2026-11-12 14:15,Order pending,,,,,,,,,,,,2026-11-12

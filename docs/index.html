@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>v5 Paper Account</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Layout: KPI strip → market + equity chart → orders → open positions (cards) → health + monthly → closed trades */
+:root {
+  --bg: #f3f4f1;
+  --card: #ffffff;
+  --ink: #17201b;
+  --muted: #66706a;
+  --line: #e0e3dd;
+  --accent: #0f6e56;
+  --accent-soft: #e2f1ec;
+  --up: #0f8a52; --up-bg: #e3f4ea;
+  --down: #c2364a; --down-bg: #fbe6e9;
+  --warn: #946200; --warn-bg: #fbf1d4;
+  --font-display: "Manrope", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Inter Tight", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1311; --card: #161d1a; --ink: #e6ece8; --muted: #93a19a; --line: #26302b;
+    --accent: #4cc7a2; --accent-soft: #15302a; --up: #4fd18f; --up-bg: #14301f; --down: #f2788a; --down-bg: #3a1a20;
+    --warn: #e6c25a; --warn-bg: #362c10; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1311; --card: #161d1a; --ink: #e6ece8; --muted: #93a19a; --line: #26302b;
+  --accent: #4cc7a2; --accent-soft: #15302a; --up: #4fd18f; --up-bg: #14301f; --down: #f2788a; --down-bg: #3a1a20;
+  --warn: #e6c25a; --warn-bg: #362c10; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font: 15px/1.5 var(--font-body); }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 22px 18px 60px; display: grid; gap: 18px; }
+.wrap > * { min-width: 0; }
+h1, h2, h3 { font-family: var(--font-display); margin: 0; text-wrap: balance; }
+h1 { font-size: 24px; font-weight: 800; letter-spacing: -0.01em; }
+h2 { font-size: 16px; font-weight: 700; }
+.muted { color: var(--muted); }
+.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+.head { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
+.head p { margin: 4px 0 0; font-size: 13px; }
+.badge { display: inline-block; font: 600 11px var(--font-body); text-transform: uppercase; letter-spacing: .06em; padding: 3px 9px; border-radius: 99px; background: var(--accent-soft); color: var(--accent); }
+.badge.stale { background: var(--warn-bg); color: var(--warn); }
+
+/* KPIs */
+.kpis { display: grid; grid-template-columns: 1.5fr repeat(4, 1fr); gap: 12px; }
+.kpi { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+.kpi .l { font-size: 12px; color: var(--muted); font-weight: 500; }
+.kpi .v { font: 700 22px var(--font-mono); margin-top: 2px; letter-spacing: -0.02em; }
+.kpi.main .v { font-size: 30px; }
+.kpi .s { font-size: 12.5px; margin-top: 2px; }
+.up { color: var(--up); } .down { color: var(--down); }
+
+/* Grid rows */
+.row2 { display: grid; grid-template-columns: 1fr 2fr; gap: 18px; }
+.row2 > *, .row2b > *, .card { min-width: 0; }
+.row2b { display: grid; grid-template-columns: 1.3fr 1fr; gap: 18px; }
+
+/* Market */
+.gauge { height: 10px; border-radius: 6px; background: var(--line); position: relative; margin: 14px 0 6px; }
+.gauge > i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 6px; background: var(--accent); }
+.gauge > b { position: absolute; top: -5px; width: 2px; height: 20px; background: var(--ink); }
+.gauge-l { display: flex; justify-content: space-between; font-size: 11.5px; color: var(--muted); }
+.switch { display: flex; align-items: center; gap: 10px; margin-top: 14px; padding: 10px 12px; border-radius: 10px; }
+.switch.on { background: var(--up-bg); color: var(--up); } .switch.off { background: var(--warn-bg); color: var(--warn); }
+.switch strong { font-family: var(--font-display); }
+.alloc { margin-top: 14px; }
+.alloc .bar { display: flex; height: 12px; border-radius: 6px; overflow: hidden; background: var(--line); }
+.alloc .bar i { display: block; height: 100%; }
+.alloc .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin-top: 6px; }
+.alloc .legend span::before { content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; background: var(--c); }
+
+/* Charts */
+canvas { width: 100%; display: block; }
+.legend2 { display: flex; gap: 16px; font-size: 12px; color: var(--muted); flex-wrap: wrap; }
+.legend2 i { display: inline-block; width: 14px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
+.tabs { display: flex; gap: 4px; }
+.tabs button { font: 600 12px var(--font-body); border: 1px solid var(--line); background: var(--card); color: var(--muted); padding: 4px 10px; border-radius: 7px; cursor: pointer; }
+.tabs button[aria-pressed="true"] { background: var(--ink); color: var(--card); border-color: var(--ink); }
+.tabs button:focus-visible, .chip:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Orders */
+.orders { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(230px, 100%), 1fr)); gap: 10px; }
+.order { border: 1px dashed var(--accent); border-radius: 10px; padding: 12px; background: var(--accent-soft); }
+.order .t { display: flex; justify-content: space-between; align-items: baseline; }
+.order .sym { font: 700 16px var(--font-display); }
+.order dl { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; margin: 8px 0 0; font-size: 13px; }
+.order dt { color: var(--muted); } .order dd { margin: 0; text-align: right; font-family: var(--font-mono); }
+
+/* Positions */
+.positions { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(330px, 100%), 1fr)); gap: 12px; }
+.pos { border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: grid; gap: 10px; background: var(--card); }
+.pos .t { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+.pos .sym { font: 800 18px var(--font-display); }
+.pos .strat { font-size: 12px; color: var(--muted); }
+.pos .pnl { text-align: right; }
+.pos .pnl .v { font: 700 18px var(--font-mono); }
+.pos .pnl .p { font: 500 12.5px var(--font-mono); }
+.track { position: relative; height: 26px; }
+.track .rail { position: absolute; left: 0; right: 0; top: 11px; height: 4px; border-radius: 2px; background: linear-gradient(90deg, var(--down-bg), var(--line) 40%, var(--up-bg)); }
+.track .m { position: absolute; top: 4px; width: 2px; height: 18px; border-radius: 1px; }
+.track .m.stop { background: var(--down); } .track .m.fill { background: var(--muted); }
+.track .dot { position: absolute; top: 6px; width: 14px; height: 14px; border-radius: 50%; border: 3px solid var(--card); transform: translateX(-7px); box-shadow: 0 0 0 1px var(--line); }
+.track-l { display: flex; justify-content: space-between; font: 11.5px var(--font-mono); color: var(--muted); }
+.pos .facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; font-size: 12px; }
+.pos .facts div { background: var(--bg); border-radius: 8px; padding: 6px 8px; }
+.pos .facts b { display: block; font: 500 13.5px var(--font-mono); color: var(--ink); }
+.pos .watch { font-size: 12.5px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 8px; }
+.days { height: 4px; border-radius: 2px; background: var(--line); overflow: hidden; }
+.days i { display: block; height: 100%; background: var(--accent); }
+
+/* Tables */
+.tw { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+th { text-align: left; font: 600 11px var(--font-body); color: var(--muted); text-transform: uppercase; letter-spacing: .05em; padding: 0 10px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+td { padding: 9px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th.n, td.n { text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.pill { display: inline-block; font: 600 11.5px var(--font-body); padding: 2px 9px; border-radius: 99px; }
+.pill.ok { background: var(--up-bg); color: var(--up); } .pill.bad { background: var(--down-bg); color: var(--down); } .pill.wait { background: var(--warn-bg); color: var(--warn); }
+.filters { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+select { font: 500 13px var(--font-body); padding: 5px 8px; border-radius: 7px; border: 1px solid var(--line); background: var(--card); color: var(--ink); }
+.months { display: grid; grid-template-columns: repeat(auto-fill, minmax(74px, 1fr)); gap: 6px; }
+.month { border-radius: 8px; padding: 8px; text-align: center; font-size: 12px; }
+.month b { display: block; font: 600 14px var(--font-mono); }
+.empty { color: var(--muted); font-size: 14px; padding: 6px 0; }
+.foot { font-size: 12px; color: var(--muted); }
+
+@media (max-width: 900px) {
+  .kpis { grid-template-columns: 1fr 1fr; }
+  .kpi.main { grid-column: 1 / -1; }
+  .row2, .row2b { grid-template-columns: 1fr; }
+}
+@media (max-width: 420px) { .positions { grid-template-columns: 1fr; } .pos .facts { grid-template-columns: 1fr 1fr; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="head">
+    <div>
+      <h1>v5 Paper Account</h1>
+      <p class="muted" id="sub"></p>
+    </div>
+    <span class="badge" id="fresh"></span>
+  </header>
+
+  <section class="kpis" id="kpis" aria-label="Account summary"></section>
+
+  <section class="row2">
+    <div class="card">
+      <h2>Market switch</h2>
+      <div id="market"></div>
+    </div>
+    <div class="card">
+      <div class="head" style="align-items:center">
+        <h2>Account vs Nifty 50</h2>
+        <div class="tabs" role="group" aria-label="Chart range" id="ranges"></div>
+      </div>
+      <div class="legend2" style="margin:8px 0 4px"><span><i style="background:var(--accent)"></i>Paper account</span><span><i style="background:var(--muted)"></i>Nifty 50</span><span><i style="background:var(--down);opacity:.5"></i>Drawdown</span></div>
+      <canvas id="eq" height="230" aria-label="Equity curve"></canvas>
+      <canvas id="dd" height="60" aria-label="Drawdown"></canvas>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="head" style="align-items:baseline"><h2>Orders for the next session</h2><span class="muted" style="font-size:13px">Buy at the open · stop the same % below your fill</span></div>
+    <div id="orders" style="margin-top:12px"></div>
+  </section>
+
+  <section class="card">
+    <div class="head" style="align-items:baseline"><h2 id="posTitle">Open positions</h2><span class="muted" style="font-size:13px">Bar: stop ◀ fill ▶ current price</span></div>
+    <div class="positions" id="positions" style="margin-top:12px"></div>
+  </section>
+
+  <section class="row2b">
+    <div class="card">
+      <h2>Strategy health vs backtest</h2>
+      <div class="tw" style="margin-top:10px"><table><thead><tr><th>Strategy</th><th class="n">Closed</th><th class="n">Win %</th><th class="n">Expected</th><th class="n">Avg R</th><th class="n">P&amp;L ₹</th><th>Status</th></tr></thead><tbody id="health"></tbody></table></div>
+    </div>
+    <div class="card">
+      <h2>Monthly return</h2>
+      <div class="months" id="months" style="margin-top:12px"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="head" style="align-items:center">
+      <h2 id="closedTitle">Closed trades</h2>
+      <div class="filters"><label for="fStrat" class="muted" style="font-size:13px">Strategy</label><select id="fStrat"></select>
+        <label for="fRes" class="muted" style="font-size:13px">Result</label><select id="fRes"><option value="">All</option><option value="win">Winners</option><option value="loss">Losers</option></select></div>
+    </div>
+    <div class="tw" style="margin-top:10px"><table><thead><tr><th>Stock</th><th>Strategy</th><th>Filled</th><th>Exited</th><th class="n">Days</th><th class="n">Fill</th><th class="n">Exit</th><th class="n">Return</th><th class="n">R</th><th class="n">P&amp;L ₹</th><th>Exit type</th></tr></thead><tbody id="closed"></tbody></table></div>
+  </section>
+
+  <p class="foot" id="foot"></p>
+</div>
+
+<script id="data" type="application/json">{"version": "v5 core", "start": "2026-11-12", "data_date": "2026-11-12", "updated": "12 Nov 2026 14:15 UTC", "max_pos": 6, "cost_pct": 0.25, "kpi": {"equity": 100000.0, "day_change": 0.0, "day_change_pct": 0.0, "ret_pct": 0.0, "nifty_ret": 0.0, "cash": 100000.0, "invested": 0.0, "unrealized": 0.0, "realized": 0.0, "open_count": 0, "closed_count": 0, "win_rate": null, "max_dd": 0.0}, "market": {"breadth": 0.793, "threshold": 0.7, "trend_on": true, "universe": 164}, "alloc": [{"label": "Cash", "pct": 100.0, "color": "#c8ccc6"}], "orders": [{"symbol": "BHEL", "strategy": "EMA 10/30 crossover", "qty": 38, "entry": 431.2, "stop": 394.84, "stop_pct": 8.4, "exit_rule": "Exit on cross back."}, {"symbol": "PAYTM", "strategy": "20-day breakout", "qty": 7, "entry": 1925.0, "stop": 1726.23, "stop_pct": 10.3, "exit_rule": "Exit on close below 10-day low."}, {"symbol": "SAIL", "strategy": "20-day breakout", "qty": 83, "entry": 177.7, "stop": 159.78, "stop_pct": 10.1, "exit_rule": "Exit on close below 10-day low."}, {"symbol": "DLF", "strategy": "20-day breakout", "qty": 21, "entry": 769.3, "stop": 712.27, "stop_pct": 7.4, "exit_rule": "Exit on close below 10-day low."}, {"symbol": "OBEROIRLTY", "strategy": "20-day breakout", "qty": 9, "entry": 1817.0, "stop": 1662.47, "stop_pct": 8.5, "exit_rule": "Exit on close below 10-day low."}, {"symbol": "LODHA", "strategy": "20-day breakout", "qty": 11, "entry": 1226.0, "stop": 1091.54, "stop_pct": 11.0, "exit_rule": "Exit on close below 10-day low."}], "open": [], "closed": [], "health": [], "months": [{"label": "Nov 26", "ret": 0.0}], "equity": [["2026-11-12", 100000.0, 25299.35]]}</script>
+<script>
+(() => {
+  const D = JSON.parse(document.getElementById("data").textContent);
+  const $ = id => document.getElementById(id);
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const inr = (v, d = 0) => (v < 0 ? "−" : "") + "₹" + Math.abs(v).toLocaleString("en-IN", { maximumFractionDigits: d, minimumFractionDigits: d });
+  const num = (v, d = 2) => v == null || !isFinite(v) ? "–" : Number(v).toLocaleString("en-IN", { maximumFractionDigits: d, minimumFractionDigits: d });
+  const pct = (v, d = 2) => v == null || !isFinite(v) ? "–" : (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v).toFixed(d) + "%";
+  const cls = v => v > 0 ? "up" : v < 0 ? "down" : "";
+  const fdate = s => new Date(s + "T00:00:00").toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
+  const fshort = s => new Date(s + "T00:00:00").toLocaleDateString("en-IN", { day: "2-digit", month: "short" });
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+  // Header
+  $("sub").textContent = `Version ${D.version} · started ${fdate(D.start)} · data up to ${fdate(D.data_date)} · updated ${D.updated}`;
+  const ageDays = Math.round((Date.now() - new Date(D.data_date + "T18:00:00+05:30")) / 864e5);
+  $("fresh").textContent = ageDays <= 4 ? "Up to date" : `Data ${ageDays} days old`;
+  if (ageDays > 4) $("fresh").classList.add("stale");
+
+  // KPIs
+  const k = D.kpi;
+  $("kpis").innerHTML = `
+    <div class="kpi main"><div class="l">Account value</div><div class="v">${inr(k.equity)}</div>
+      <div class="s"><span class="${cls(k.day_change)} num">${k.day_change >= 0 ? "+" : "−"}${inr(Math.abs(k.day_change)).replace("−", "")} (${pct(k.day_change_pct)})</span> <span class="muted">today</span></div></div>
+    <div class="kpi"><div class="l">Total return</div><div class="v ${cls(k.ret_pct)}">${pct(k.ret_pct)}</div><div class="s muted">Nifty <span class="num ${cls(k.nifty_ret)}">${pct(k.nifty_ret)}</span></div></div>
+    <div class="kpi"><div class="l">Cash available</div><div class="v">${inr(k.cash)}</div><div class="s muted">${k.open_count} of ${D.max_pos} slots used</div></div>
+    <div class="kpi"><div class="l">Open P&amp;L</div><div class="v ${cls(k.unrealized)}">${inr(k.unrealized)}</div><div class="s muted">invested ${inr(k.invested)}</div></div>
+    <div class="kpi"><div class="l">Realized P&amp;L</div><div class="v ${cls(k.realized)}">${inr(k.realized)}</div><div class="s muted">${k.closed_count} trades · win ${k.win_rate == null ? "–" : k.win_rate.toFixed(0) + "%"} · max DD ${pct(k.max_dd, 1)}</div></div>`;
+
+  // Market
+  const m = D.market;
+  $("market").innerHTML = `
+    <p class="muted" style="margin:6px 0 0;font-size:13px">Share of the ${m.universe} stocks above their 50-day EMA</p>
+    <div style="font:800 34px var(--font-display);margin-top:4px">${(m.breadth * 100).toFixed(0)}%</div>
+    <div class="gauge"><i style="width:${m.breadth * 100}%"></i><b style="left:${m.threshold * 100}%" title="Trend switch"></b></div>
+    <div class="gauge-l"><span>0%</span><span>switch at ${(m.threshold * 100).toFixed(0)}%</span><span>100%</span></div>
+    <div class="switch ${m.trend_on ? "on" : "off"}"><strong>Trend strategies ${m.trend_on ? "ON" : "OFF"}</strong>
+      <span style="font-size:13px">${m.trend_on ? "20-day breakout, Supertrend and EMA 10/30 can open trades." : "Only Oversold leader can open trades."}</span></div>
+    <div class="alloc"><div class="muted" style="font-size:12px;margin-bottom:6px">Where the money is</div>
+      <div class="bar">${D.alloc.map(a => `<i style="width:${a.pct}%;background:${a.color}" title="${esc(a.label)} ${a.pct.toFixed(1)}%"></i>`).join("")}</div>
+      <div class="legend">${D.alloc.map(a => `<span style="--c:${a.color}">${esc(a.label)} ${a.pct.toFixed(0)}%</span>`).join("")}</div></div>`;
+
+  // Orders
+  $("orders").innerHTML = D.orders.length ? `<div class="orders">${D.orders.map(o => `
+    <div class="order"><div class="t"><span class="sym">${esc(o.symbol)}</span><span class="muted" style="font-size:12px">${esc(o.strategy)}</span></div>
+      <dl><dt>Buy</dt><dd>${o.qty} shares at open</dd><dt>Est. entry</dt><dd>${num(o.entry)}</dd><dt>Est. stop</dt><dd>${num(o.stop)} (${o.stop_pct.toFixed(1)}%)</dd><dt>Exit</dt><dd style="font-family:var(--font-body);font-size:12px">${esc(o.exit_rule)}</dd></dl></div>`).join("")}</div>`
+    : `<p class="empty">No new orders. ${D.kpi.open_count >= D.max_pos ? "All slots are full." : "No v5 signals today."}</p>`;
+
+  // Positions
+  $("posTitle").textContent = `Open positions (${D.open.length})`;
+  $("positions").innerHTML = D.open.length ? D.open.map((p, k) => {
+    const lo = Math.min(p.stop, p.last, p.fill) * 0.995, hi = Math.max(p.last, p.fill, p.stop + 2 * (p.fill - p.stop)) * 1.005;
+    const X = v => ((v - lo) / (hi - lo) * 100).toFixed(2);
+    const col = p.pnl >= 0 ? "var(--up)" : "var(--down)";
+    return `<article class="pos">
+      <div class="t"><div><div class="sym">${esc(p.symbol)}</div><div class="strat">${esc(p.strategy)} · since ${fshort(p.filled)}</div></div>
+        <div class="pnl"><div class="v ${cls(p.pnl)}">${inr(p.pnl)}</div><div class="p ${cls(p.ret)}">${pct(p.ret)}</div></div></div>
+      <canvas class="spark" data-k="${k}" height="54" aria-label="Recent prices for ${esc(p.symbol)}"></canvas>
+      <div><div class="track"><div class="rail"></div>
+        <span class="m stop" style="left:${X(p.stop)}%" title="Stop ${num(p.stop)}"></span><span class="m fill" style="left:${X(p.fill)}%" title="Fill ${num(p.fill)}"></span>
+        <span class="dot" style="left:${X(p.last)}%;background:${col}" title="Last ${num(p.last)}"></span></div>
+        <div class="track-l"><span>stop ${num(p.stop)}</span><span>fill ${num(p.fill)}</span><span>now ${num(p.last)}</span></div></div>
+      <div class="facts"><div>Qty<b>${p.qty}</b></div><div>Value<b>${inr(p.value)}</b></div><div>Room to stop<b>${pct(-p.room, 1).replace("−", "")}</b></div></div>
+      <div><div class="muted" style="font-size:11.5px;display:flex;justify-content:space-between"><span>Day ${p.days} of ${p.max_days}</span><span>${p.days_left} left</span></div>
+        <div class="days"><i style="width:${Math.min(100, p.days / p.max_days * 100)}%"></i></div></div>
+      <div class="watch">${esc(p.watch)}</div></article>`;
+  }).join("") : `<p class="empty">No open positions.</p>`;
+
+  // Health
+  $("health").innerHTML = D.health.length ? D.health.map(h => `<tr><td>${esc(h.strategy)}</td><td class="n">${h.trades}</td><td class="n">${h.win.toFixed(0)}%</td><td class="n">${esc(h.expected)}</td>
+      <td class="n ${cls(h.avg_r)}">${num(h.avg_r)}</td><td class="n ${cls(h.pnl)}">${num(h.pnl, 0)}</td>
+      <td><span class="pill ${h.status === "in line" || h.status === "better" ? "ok" : h.status.startsWith("WORSE") ? "bad" : "wait"}">${esc(h.status)}</span></td></tr>`).join("")
+    : `<tr><td colspan="7" class="empty">No closed trades yet. Judge after 20+ trades per strategy.</td></tr>`;
+
+  // Months
+  const bgFor = v => v > 0 ? `color-mix(in srgb, var(--up) ${Math.min(45, 8 + v * 5)}%, var(--card))` : v < 0 ? `color-mix(in srgb, var(--down) ${Math.min(45, 8 - v * 5)}%, var(--card))` : "var(--bg)";
+  $("months").innerHTML = D.months.length ? D.months.map(mo => `<div class="month" style="background:${bgFor(mo.ret)}">${esc(mo.label)}<b>${pct(mo.ret, 1)}</b></div>`).join("")
+    : `<p class="empty">Builds up month by month.</p>`;
+
+  // Closed trades
+  const strats = [...new Set(D.closed.map(c => c.strategy))].sort();
+  $("fStrat").innerHTML = `<option value="">All</option>` + strats.map(s => `<option>${esc(s)}</option>`).join("");
+  function renderClosed() {
+    const fs = $("fStrat").value, fr = $("fRes").value;
+    const rows = D.closed.filter(c => (!fs || c.strategy === fs) && (!fr || (fr === "win" ? c.pnl > 0 : c.pnl <= 0)));
+    $("closedTitle").textContent = `Closed trades (${rows.length})`;
+    $("closed").innerHTML = rows.length ? rows.map(c => `<tr><td><strong>${esc(c.symbol)}</strong></td><td>${esc(c.strategy)}</td><td>${fshort(c.filled)}</td><td>${fshort(c.exited)}</td>
+      <td class="n">${c.days}</td><td class="n">${num(c.fill)}</td><td class="n">${num(c.exit)}</td><td class="n ${cls(c.ret)}">${pct(c.ret)}</td>
+      <td class="n ${cls(c.r)}">${num(c.r)}</td><td class="n ${cls(c.pnl)}">${num(c.pnl, 0)}</td><td>${esc(c.result)}</td></tr>`).join("")
+      : `<tr><td colspan="11" class="empty">No closed trades${fs || fr ? " match the filter" : " yet"}.</td></tr>`;
+  }
+  $("fStrat").addEventListener("change", renderClosed); $("fRes").addEventListener("change", renderClosed); renderClosed();
+
+  // Charts
+  function prep(cv) {
+    const dpr = window.devicePixelRatio || 1, w = cv.clientWidth, h = +cv.getAttribute("height");
+    cv.width = w * dpr; cv.height = h * dpr; cv.style.height = h + "px";
+    const g = cv.getContext("2d"); g.setTransform(dpr, 0, 0, dpr, 0, 0); return [g, w, h];
+  }
+  const ranges = [["1M", 22], ["3M", 66], ["6M", 132], ["All", 1e9]];
+  let range = "All";
+  $("ranges").innerHTML = ranges.map(([l]) => `<button type="button" aria-pressed="${l === range}" data-r="${l}">${l}</button>`).join("");
+  $("ranges").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; range = b.dataset.r;
+    $("ranges").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); drawEq(); });
+  function drawEq() {
+    const n = ranges.find(r => r[0] === range)[1];
+    const pts = D.equity.slice(-Math.min(n, D.equity.length));
+    let [g, w, h] = prep($("eq"));
+    if (pts.length < 2) { g.fillStyle = css("--muted"); g.font = "13px " + css("--font-body"); g.fillText("The chart fills in as days pass.", 8, 30); prep($("dd")); return; }
+    const b0e = pts[0][1], b0n = pts[0][2];
+    const E = pts.map(p => p[1] / b0e * 100), N = pts.map(p => p[2] == null ? null : p[2] / b0n * 100);
+    const all = E.concat(N.filter(v => v != null)); let lo = Math.min(...all), hi = Math.max(...all); const pd = (hi - lo) * .12 || 1; lo -= pd; hi += pd;
+    const L = 6, R = 52, X = i => L + i / (pts.length - 1) * (w - L - R), Y = v => 8 + (hi - v) / (hi - lo) * (h - 30);
+    g.font = "11px " + css("--font-mono"); g.strokeStyle = css("--line"); g.fillStyle = css("--muted"); g.lineWidth = 1;
+    for (let k = 0; k <= 3; k++) { const v = lo + (hi - lo) * k / 3, y = Y(v); g.beginPath(); g.moveTo(L, y); g.lineTo(w - R, y); g.stroke(); g.fillText(v.toFixed(1), w - R + 6, y + 4); }
+    g.textAlign = "left"; g.fillText(fshort(pts[0][0]), L, h - 6); g.textAlign = "right"; g.fillText(fshort(pts[pts.length - 1][0]), w - R, h - 6); g.textAlign = "left";
+    g.beginPath(); E.forEach((v, i) => i ? g.lineTo(X(i), Y(v)) : g.moveTo(X(i), Y(v))); g.lineTo(X(E.length - 1), h - 22); g.lineTo(X(0), h - 22); g.closePath();
+    const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, css("--accent-soft")); gr.addColorStop(1, "transparent"); g.fillStyle = gr; g.fill();
+    g.setLineDash([4, 3]); g.strokeStyle = css("--muted"); g.lineWidth = 1.3; g.beginPath(); let st = false;
+    N.forEach((v, i) => { if (v == null) return; st ? g.lineTo(X(i), Y(v)) : g.moveTo(X(i), Y(v)); st = true; }); g.stroke(); g.setLineDash([]);
+    g.strokeStyle = css("--accent"); g.lineWidth = 2; g.beginPath(); E.forEach((v, i) => i ? g.lineTo(X(i), Y(v)) : g.moveTo(X(i), Y(v))); g.stroke();
+    g.fillStyle = css("--accent"); g.beginPath(); g.arc(X(E.length - 1), Y(E[E.length - 1]), 4, 0, 7); g.fill();
+    // drawdown
+    [g, w, h] = prep($("dd")); let pk = -1e18; const dd = pts.map(p => { pk = Math.max(pk, p[1]); return (p[1] / pk - 1) * 100; });
+    const mn = Math.min(-1, ...dd); const Yd = v => 4 + v / mn * (h - 10);
+    g.fillStyle = css("--down"); g.globalAlpha = .35; g.beginPath(); g.moveTo(X(0), Yd(0)); dd.forEach((v, i) => g.lineTo(X(i), Yd(v))); g.lineTo(X(dd.length - 1), Yd(0)); g.closePath(); g.fill(); g.globalAlpha = 1;
+    g.fillStyle = css("--muted"); g.font = "11px " + css("--font-mono"); g.fillText(mn.toFixed(1) + "%", w - R + 6, h - 6);
+  }
+  function drawSparks() {
+    document.querySelectorAll("canvas.spark").forEach(cv => {
+      const p = D.open[+cv.dataset.k]; const s = p.spark; if (!s || s.length < 2) return;
+      const [g, w, h] = prep(cv);
+      const vals = s.map(x => x[1]).concat([p.stop, p.fill]); const lo = Math.min(...vals), hi = Math.max(...vals);
+      const X = i => 2 + i / (s.length - 1) * (w - 4), Y = v => 3 + (hi - v) / (hi - lo || 1) * (h - 6);
+      g.strokeStyle = css("--down"); g.setLineDash([3, 3]); g.lineWidth = 1; g.beginPath(); g.moveTo(0, Y(p.stop)); g.lineTo(w, Y(p.stop)); g.stroke();
+      g.strokeStyle = css("--muted"); g.beginPath(); g.moveTo(0, Y(p.fill)); g.lineTo(w, Y(p.fill)); g.stroke(); g.setLineDash([]);
+      const fi = s.findIndex(x => x[0] >= p.filled);
+      if (fi >= 0) { g.fillStyle = css("--accent-soft"); g.fillRect(X(fi), 0, w - X(fi), h); }
+      g.strokeStyle = p.pnl >= 0 ? css("--up") : css("--down"); g.lineWidth = 1.6; g.beginPath(); s.forEach((x, i) => i ? g.lineTo(X(i), Y(x[1])) : g.moveTo(X(i), Y(x[1]))); g.stroke();
+    });
+  }
+  const drawAll = () => { drawEq(); drawSparks(); };
+  drawAll();
+  let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(drawAll, 120); });
+  matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", drawAll);
+
+  $("foot").textContent = `Paper trading only, not investment advice. Prices: Yahoo Finance end-of-day. Fills at the next open, stops at the stop price (or the open if it gaps below), exits at the close. Costs ${D.cost_pct}% per round trip are included.`;
+})();
+</script>
+</body>
+</html>
