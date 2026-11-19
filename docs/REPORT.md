@@ -1,10 +1,10 @@
-# v5 Paper Trading: Tuesday 17 Nov 2026
+# v5 Paper Trading: Wednesday 18 Nov 2026
 
-_Updated automatically 18 Nov 2026 21:27 UTC · version **v5 core** · started 12 Nov 2026_
+_Updated automatically 19 Nov 2026 21:38 UTC · version **v5 core** · started 12 Nov 2026_
 
-**Equity ₹99,273** (-0.73%) · Nifty since start +0.35% · open positions 6 · closed trades 0 · max drawdown -1.8%
+**Equity ₹97,918** (-2.08%) · Nifty since start -0.28% · open positions 5 · closed trades 1 · win rate 0% · max drawdown -2.1%
 
-Market breadth 68% → trend strategies **OFF**
+Market breadth 62% → trend strategies **OFF**
 
 ![equity](equity.png)
 
@@ -17,20 +17,23 @@ _None._
 
 | Stock | Strategy | Filled | Qty | Fill | Last | Stop | Return % | P&L ₹ | Days left | Exit watch |
 |---|---|---|---|---|---|---|---|---|---|---|
-| BHEL | EMA 10/30 crossover | 13 Nov | 38 | 427.80 | 430.65 | 391.44 | 0.67 | 88.00 | 57 | EMA10 424.85 vs EMA30 420.57 |
-| PAYTM | 20-day breakout | 13 Nov | 7 | 1,920.00 | 1,903.40 | 1,721.23 | -0.86 | -133.00 | 57 | sells on a close below 1642.00 (10-day low) |
-| SAIL | 20-day breakout | 13 Nov | 83 | 176.70 | 171.31 | 158.78 | -3.05 | -466.00 | 57 | sells on a close below 164.51 (10-day low) |
-| DLF | 20-day breakout | 13 Nov | 21 | 767.00 | 765.95 | 709.97 | -0.14 | -42.00 | 57 | sells on a close below 698.55 (10-day low) |
-| OBEROIRLTY | 20-day breakout | 13 Nov | 9 | 1,821.80 | 1,819.70 | 1,667.27 | -0.12 | -39.00 | 57 | sells on a close below 1630.00 (10-day low) |
-| LODHA | 20-day breakout | 13 Nov | 11 | 1,224.10 | 1,203.10 | 1,089.64 | -1.72 | -248.00 | 57 | sells on a close below 999.90 (10-day low) |
+| BHEL | EMA 10/30 crossover | 13 Nov | 38 | 427.80 | 421.70 | 391.44 | -1.43 | -252.00 | 56 | EMA10 424.28 vs EMA30 420.64 |
+| PAYTM | 20-day breakout | 13 Nov | 7 | 1,920.00 | 1,890.00 | 1,721.23 | -1.56 | -227.00 | 56 | sells on a close below 1696.30 (10-day low) |
+| DLF | 20-day breakout | 13 Nov | 21 | 767.00 | 764.30 | 709.97 | -0.35 | -77.00 | 56 | sells on a close below 703.10 (10-day low) |
+| OBEROIRLTY | 20-day breakout | 13 Nov | 9 | 1,821.80 | 1,800.00 | 1,667.27 | -1.20 | -217.00 | 56 | sells on a close below 1655.30 (10-day low) |
+| LODHA | 20-day breakout | 13 Nov | 11 | 1,224.10 | 1,197.10 | 1,089.64 | -2.21 | -314.00 | 56 | sells on a close below 1036.10 (10-day low) |
 
 ## Health check vs backtest
 
-_None._
+| Strategy | Closed trades | Win % | Expected win % | Avg R | P&L ₹ | Health |
+|---|---|---|---|---|---|---|
+| 20-day breakout | 1 | 0.00 | 35–46 | -0.73 | -1,091.00 | too early (1/20 trades) |
 
 ## Recent closed trades
 
-_None._
+| Stock | Strategy | Filled | Exited | Exit type | Return % | R | P&L ₹ |
+|---|---|---|---|---|---|---|---|
+| SAIL | 20-day breakout | 13 Nov 26 | 18 Nov 26 | Exit rule | -7.44 | -0.73 | -1,091.00 |
 
 ## Charts
 **BHEL**
@@ -40,10 +43,6 @@ _None._
 **PAYTM**
 
 ![PAYTM](charts/PAYTM.png)
-
-**SAIL**
-
-![SAIL](charts/SAIL.png)
 
 **DLF**
 
