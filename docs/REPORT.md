@@ -1,10 +1,10 @@
-# v5 Paper Trading: Friday 20 Nov 2026
+# v5 Paper Trading: Monday 23 Nov 2026
 
-_Updated automatically 24 Nov 2026 00:57 UTC · version **v5 core** · started 12 Nov 2026_
+_Updated automatically 24 Nov 2026 23:03 UTC · version **v5 core** · started 12 Nov 2026_
 
-**Equity ₹98,216** (-1.78%) · Nifty since start +1.98% · open positions 4 · closed trades 2 · win rate 0% · max drawdown -2.6%
+**Equity ₹97,881** (-2.12%) · Nifty since start +0.20% · open positions 4 · closed trades 2 · win rate 0% · max drawdown -2.6%
 
-Market breadth 69% → trend strategies **OFF**
+Market breadth 66% → trend strategies **OFF**
 
 ![equity](equity.png)
 
@@ -17,10 +17,10 @@ _None._
 
 | Stock | Strategy | Filled | Qty | Fill | Last | Stop | Return % | P&L ₹ | Days left | Exit watch |
 |---|---|---|---|---|---|---|---|---|---|---|
-| BHEL | EMA 10/30 crossover | 13 Nov | 38 | 427.80 | 433.65 | 391.44 | 1.37 | 202.00 | 54 | EMA10 427.58 vs EMA30 422.35 |
-| DLF | 20-day breakout | 13 Nov | 21 | 767.00 | 785.00 | 709.97 | 2.35 | 358.00 | 54 | sells on a close below 732.05 (10-day low) |
-| OBEROIRLTY | 20-day breakout | 13 Nov | 9 | 1,821.80 | 1,843.00 | 1,667.27 | 1.16 | 170.00 | 54 | sells on a close below 1704.40 (10-day low) |
-| LODHA | 20-day breakout | 13 Nov | 11 | 1,224.10 | 1,218.70 | 1,089.64 | -0.44 | -76.00 | 54 | sells on a close below 1131.00 (10-day low) |
+| BHEL | EMA 10/30 crossover | 13 Nov | 38 | 427.80 | 415.70 | 391.44 | -2.83 | -480.00 | 53 | EMA10 425.42 vs EMA30 421.92 |
+| DLF | 20-day breakout | 13 Nov | 21 | 767.00 | 794.10 | 709.97 | 3.53 | 549.00 | 53 | sells on a close below 734.15 (10-day low) |
+| OBEROIRLTY | 20-day breakout | 13 Nov | 9 | 1,821.80 | 1,860.00 | 1,667.27 | 2.10 | 323.00 | 53 | sells on a close below 1722.00 (10-day low) |
+| LODHA | 20-day breakout | 13 Nov | 11 | 1,224.10 | 1,219.00 | 1,089.64 | -0.42 | -73.00 | 53 | sells on a close below 1148.20 (10-day low) |
 
 ## Health check vs backtest
 
