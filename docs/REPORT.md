@@ -1,26 +1,30 @@
-# v5 Paper Trading: Wednesday 25 Nov 2026
+# v5 Paper Trading: Thursday 26 Nov 2026
 
-_Updated automatically 26 Nov 2026 22:24 UTC · version **v5 core** · started 12 Nov 2026_
+_Updated automatically 27 Nov 2026 22:01 UTC · version **v5 core** · started 12 Nov 2026_
 
-**Equity ₹97,706** (-2.29%) · Nifty since start +2.05% · open positions 4 · closed trades 2 · win rate 0% · max drawdown -2.6%
+**Equity ₹99,163** (-0.84%) · Nifty since start +2.31% · open positions 4 · closed trades 2 · win rate 0% · max drawdown -2.6%
 
-Market breadth 69% → trend strategies **OFF**
+Market breadth 70% → trend strategies **ON**
 
 ![equity](equity.png)
 
 ## Orders for the next session (buy at the open)
 
-_None._
+| Stock | Strategy | Qty | Est. entry | Est. stop | Stop % |
+|---|---|---|---|---|---|
+| LAURUSLABS | 20-day breakout | 6 | 2,505.00 | 2,263.11 | 9.70 |
+| MCX | 20-day breakout | 3 | 3,835.00 | 3,440.76 | 10.30 |
 
+After the fill, the stop sits the same % below the fill price.
 
 ## Open positions
 
 | Stock | Strategy | Filled | Qty | Fill | Last | Stop | Return % | P&L ₹ | Days left | Exit watch |
 |---|---|---|---|---|---|---|---|---|---|---|
-| BHEL | EMA 10/30 crossover | 13 Nov | 38 | 427.80 | 413.50 | 391.44 | -3.34 | -564.00 | 52 | EMA10 423.25 vs EMA30 421.38 |
-| DLF | 20-day breakout | 13 Nov | 21 | 767.00 | 795.00 | 709.97 | 3.65 | 568.00 | 52 | sells on a close below 734.15 (10-day low) |
-| OBEROIRLTY | 20-day breakout | 13 Nov | 9 | 1,821.80 | 1,868.50 | 1,667.27 | 2.56 | 400.00 | 52 | sells on a close below 1733.10 (10-day low) |
-| LODHA | 20-day breakout | 13 Nov | 11 | 1,224.10 | 1,202.00 | 1,089.64 | -1.81 | -260.00 | 52 | sells on a close below 1161.60 (10-day low) |
+| BHEL | EMA 10/30 crossover | 13 Nov | 38 | 427.80 | 418.95 | 391.44 | -2.07 | -357.00 | 51 | EMA10 422.47 vs EMA30 421.22 |
+| DLF | 20-day breakout | 13 Nov | 21 | 767.00 | 807.80 | 709.97 | 5.32 | 837.00 | 51 | sells on a close below 740.00 (10-day low) |
+| OBEROIRLTY | 20-day breakout | 13 Nov | 9 | 1,821.80 | 1,905.20 | 1,667.27 | 4.58 | 730.00 | 51 | sells on a close below 1740.60 (10-day low) |
+| LODHA | 20-day breakout | 13 Nov | 11 | 1,224.10 | 1,261.20 | 1,089.64 | 3.03 | 391.00 | 51 | sells on a close below 1170.30 (10-day low) |
 
 ## Health check vs backtest
 
@@ -36,6 +40,14 @@ _None._
 | SAIL | 20-day breakout | 13 Nov 26 | 18 Nov 26 | Exit rule | -7.44 | -0.73 | -1,091.00 |
 
 ## Charts
+**LAURUSLABS**
+
+![LAURUSLABS](charts/LAURUSLABS.png)
+
+**MCX**
+
+![MCX](charts/MCX.png)
+
 **BHEL**
 
 ![BHEL](charts/BHEL.png)
